@@ -4,19 +4,27 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Telegram Mini App</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin-top: 50px;
+    }
+    h1 {
+      color: #333;
+    }
+    h2 {
+      color: #555;
+    }
+    .error {
+      color: red;
+    }
+  </style>
 </head>
 <body>
-  <h1>Welcome to My Mini App!</h1>
-  <button id="btn">Click Me</button>
+  <h1>Welcome to Telegram Mini App!</h1>
+  <h2 id="username">Fetching your details...</h2>
 
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script>
-    Telegram.WebApp.ready();
-    
-    document.getElementById('btn').addEventListener('click', () => {
-      Telegram.WebApp.MainButton.setText('Clicked!');
-      Telegram.WebApp.MainButton.show();
-    });
-  </script>
+  <script src="app.js"></script>
 </body>
 </html>
