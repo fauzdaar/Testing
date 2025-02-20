@@ -4,9 +4,8 @@ Tic-Tac-Toe Online 🎮
 
 A simple multiplayer Tic-Tac-Toe game built with HTML, CSS, JavaScript, and Firebase for real-time play.
 
-🔗 Live Demo
-
-🎮 Play Now
+## 🔗 Live Demo  
+➡️ **[Play Now](https://fauzdaar.github.io/Testing/index)**
 
 
 ---
