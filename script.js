@@ -18,8 +18,8 @@ const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
 let currentPlayer = "X";
-let playerAssigned = false;
 let playerSymbol = "";
+let playerAssigned = false;
 
 // Assign player symbol (X or O)
 onValue(ref(db, "players"), (snapshot) => {
@@ -28,12 +28,11 @@ onValue(ref(db, "players"), (snapshot) => {
         if (!players.X) {
             set(ref(db, "players/X"), true);
             playerSymbol = "X";
-            playerAssigned = true;
         } else if (!players.O) {
             set(ref(db, "players/O"), true);
             playerSymbol = "O";
-            playerAssigned = true;
         }
+        playerAssigned = true;
         document.getElementById("status").innerText = `You are Player ${playerSymbol}`;
     }
 });
@@ -41,6 +40,7 @@ onValue(ref(db, "players"), (snapshot) => {
 // Function to update Firebase when a move is made
 function updateMove(position) {
     set(ref(db, "game/" + position), playerSymbol);
+    set(ref(db, "turn"), playerSymbol === "X" ? "O" : "X"); // Update turn
 }
 
 // Function to listen for game changes
@@ -54,12 +54,20 @@ onValue(ref(db, "game"), (snapshot) => {
     }
 });
 
+// Track whose turn it is
+onValue(ref(db, "turn"), (snapshot) => {
+    const turn = snapshot.val();
+    if (turn) {
+        currentPlayer = turn;
+        document.getElementById("turnIndicator").innerText = `It's Player ${turn}'s turn`;
+    }
+});
+
 // Add event listeners to cells
 document.querySelectorAll(".cell").forEach((cell) => {
     cell.addEventListener("click", function () {
         if (!this.innerText && currentPlayer === playerSymbol) {
             updateMove(this.id);
-            currentPlayer = currentPlayer === "X" ? "O" : "X";  // Switch turn
         }
     });
 });
@@ -77,6 +85,7 @@ function checkWin() {
         let [a, b, c] = pattern;
         if (cells[a].innerText && cells[a].innerText === cells[b].innerText && cells[a].innerText === cells[c].innerText) {
             document.getElementById("status").innerText = `Player ${cells[a].innerText} Wins!`;
+            remove(ref(db, "turn")); // Stop game after win
             return;
         }
     }
@@ -85,6 +94,8 @@ function checkWin() {
 // Reset button functionality
 document.getElementById("reset").addEventListener("click", () => {
     remove(ref(db, "game"));
+    remove(ref(db, "turn"));
     document.querySelectorAll(".cell").forEach((cell) => (cell.innerText = ""));
     document.getElementById("status").innerText = "Game Reset!";
+    document.getElementById("turnIndicator").innerText = "";
 });
