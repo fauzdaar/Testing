@@ -12,19 +12,24 @@ const Chat = () => {
   useEffect(() => {
     socket.on("connect", () => {
       setMyId(socket.id); // Store unique socket ID
+      console.log("Connected with ID:", socket.id);
     });
 
     socket.on("receiveMessage", (msg) => {
-      setMessages((prev) => [...prev, msg]); // Add messages only from server
+      console.log("Received message:", msg); // Debugging
+      setMessages((prev) => [...prev, msg]); 
     });
 
-    return () => socket.off("receiveMessage");
+    return () => {
+      socket.off("receiveMessage");
+    };
   }, []);
 
   const sendMessage = () => {
     if (message.trim()) {
       const myMessage = { text: message, sender: myId };
       socket.emit("sendMessage", myMessage); // Send message to server
+      setMessages((prev) => [...prev, myMessage]); // Show instantly
       setMessage(""); // Clear input field
     }
   };
@@ -33,14 +38,18 @@ const Chat = () => {
     <div className="chat-container">
       <h2 className="chat-header">Chat App</h2>
       <div className="chat-box">
-        {messages.map((msg, index) => (
-          <p
-            key={index}
-            className={`chat-message ${msg.sender === myId ? "sent" : "received"}`}
-          >
-            {msg.text}
-          </p>
-        ))}
+        {messages.length === 0 ? (
+          <p>No messages yet</p> // Show this if empty
+        ) : (
+          messages.map((msg, index) => (
+            <p
+              key={index}
+              className={`chat-message ${msg.sender === myId ? "sent" : "received"}`}
+            >
+              {msg.text}
+            </p>
+          ))
+        )}
       </div>
       <div className="chat-input-container">
         <input
