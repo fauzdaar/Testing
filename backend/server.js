@@ -9,7 +9,7 @@ app.use(cors());
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:5173", // Change if needed
+    origin: "https://chat-app-woad-seven-92.vercel.app/", // Change if needed
     methods: ["GET", "POST"],
   },
 });
