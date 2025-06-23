@@ -1,85 +1,32 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Telegram + Supabase Auth Debug</title>
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="https://unpkg.com/@supabase/supabase-js"></script>
-  <style>
-    body {
-      font-family: sans-serif;
-      padding: 2em;
-      text-align: center;
-    }
-    h1 {
-      color: #0088cc;
-    }
-    #status {
-      margin-top: 20px;
-      font-size: 18px;
-      white-space: pre-line;
-    }
-  </style>
-</head>
-<body>
-  <h1>🚀 Telegram Mini App + Supabase</h1>
-  <p id="status">🔄 Initializing...</p>
-
-  <script>
-    // ✅ Supabase setup
-    const supabase = supabase.createClient(
-      "https://rlmsugljbapxyinydjyw.supabase.co", // ✅ Your Supabase project URL
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJsbXN1Z2xqYmFweHlpbnlkanl3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA2MzA2NjksImV4cCI6MjA2NjIwNjY2OX0.29hBoWG4wWh_c2VGBgELZc7YD49B4vmfCh6ZP4x28AE"
-    );
-
-    // ✅ Wait for Telegram to initialize
-    window.Telegram.WebApp.ready();
-
-    const tg = window.Telegram.WebApp;
-    let user = tg?.initDataUnsafe?.user;
-
-    if (!user) {
-      console.warn("⚠️ Not inside Telegram. Using test user.");
-      document.getElementById("status").innerText = "⚠️ Not inside Telegram. Using test user.";
-      user = {
-        id: "999999",
-        username: "testuser",
-        first_name: "Test",
-        photo_url: "https://t.me/i/userpic/320/test.jpg"
-      };
-    } else {
-      console.log("✅ Telegram user detected:", user);
-      document.getElementById("status").innerText = `👋 Hello, ${user.username || user.first_name}`;
-    }
-
-    // ✅ Save user to Supabase
-    async function registerUser() {
-      try {
-        const { data, error } = await supabase
-          .from("users")
-          .upsert([
-            {
-              telegram_id: user.id.toString(),
-              username: user.username || "",
-              first_name: user.first_name || "",
-              photo_url: user.photo_url || ""
-            }
-          ]);
-
-        if (error) {
-          console.error("❌ Supabase error:", error);
-          document.getElementById("status").innerText += `\n❌ Registration failed.`;
-        } else {
-          console.log("✅ Supabase response:", data);
-          document.getElementById("status").innerText += `\n✅ Registered successfully!`;
-        }
-      } catch (err) {
-        console.error("❌ Unexpected error:", err);
-        document.getElementById("status").innerText += `\n🚫 Unexpected error occurred.`;
+<html>
+  <head>
+    <title>Mini App Test</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+      body {
+        background: #111;
+        color: white;
+        text-align: center;
+        font-family: sans-serif;
+        padding: 2rem;
       }
-    }
+    </style>
+  </head>
+  <body>
+    <h1>Telegram Mini App</h1>
+    <p id="user">Loading...</p>
 
-    registerUser();
-  </script>
-</body>
+    <script>
+      const tg = window.Telegram?.WebApp;
+      tg?.ready();
+
+      const user = tg?.initDataUnsafe?.user;
+      if (user) {
+        document.getElementById("user").innerText = `Hello, ${user.first_name}!`;
+      } else {
+        document.getElementById("user").innerText = "Not running inside Telegram";
+      }
+    </script>
+  </body>
 </html>
