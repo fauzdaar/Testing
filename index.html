@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Telegram + Supabase Auth Test</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="https://unpkg.com/@supabase/supabase-js"></script>
+</head>
+<body>
+  <h1>Telegram Mini App - Auto Register</h1>
+  <p id="status">Initializing...</p>
+
+  <script>
+    // 🌐 Initialize Supabase
+    const supabase = supabase.createClient(
+      "https://rlmsugljbapxyinydjyw.supabase.co", // Replace this
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJsbXN1Z2xqYmFweHlpbnlkanl3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA2MzA2NjksImV4cCI6MjA2NjIwNjY2OX0.29hBoWG4wWh_c2VGBgELZc7YD49B4vmfCh6ZP4x28AE" // Replace this
+    );
+
+    // ⚡ Get Telegram User Info
+    const tg = window.Telegram.WebApp;
+    const user = tg.initDataUnsafe.user;
+
+    document.getElementById("status").innerText = `Hello, ${user.username}`;
+
+    // 🚀 Send user to Supabase
+    async function registerUser() {
+      const { data, error } = await supabase
+        .from("users")
+        .upsert([
+          {
+            telegram_id: user.id.toString(),
+            username: user.username,
+            first_name: user.first_name,
+            photo_url: user.photo_url,
+          }
+        ]);
+
+      if (error) {
+        document.getElementById("status").innerText = "❌ Registration failed.";
+        console.error(error);
+      } else {
+        document.getElementById("status").innerText = "✅ User registered!";
+      }
+    }
+
+    registerUser();
+  </script>
+</body>
+</html>
